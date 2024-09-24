@@ -1,16 +1,5 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{{asset('output.css')}}" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-</head>
-<body class="font-poppins text-black">
-    {{-- <section id="content" class="max-w-[640px] w-full mx-auto bg-[#93E9BE] min-h-screen flex flex-col gap-8 pb-[120px]"> --}}
-      <section id="content" class="max-w-[640px] w-full mx-auto bg-[rgb(147,223,190)] min-h-screen flex flex-col gap-8 pb-[120px]">
+@extends('front.layouts.app')
+@section('content')
         <nav class="mt-8 px-4 w-full flex items-center justify-between">
           <div class="flex items-center gap-3">
 
@@ -38,49 +27,29 @@
             </div>
           </a>
         </nav>
-        <h1 class="font-semibold text-2xl leading-[36px] text-center">Explore New<br>Experience with Us</h1>
+        <h1 class="font-semibold text-2xl leading-[36px] text-center">Promo<br>Akhir Tahun Dadakan</h1>
         <div id="categories" class="flex flex-col gap-3">
           <h2 class="font-semibold px-4">Categories</h2>
           <div class="main-carousel buttons-container">
-            <a href="category.html" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
+            @forelse ($categories as $category)
+            <a href="{{ route('front.category', $category->slug) }}" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
               <div class="p-3 flex items-center gap-2 rounded-[10px] border border-[#4D73FF] group-hover:bg-[#4D73FF] transition-all duration-300">
                 <div class="w-6 h-6 flex shrink-0">
-                  <img src="assets/icons/umbrella.svg" alt="icon">
+                  <img src="{{Storage::url($category->icon)}}" alt="icon">
                 </div>
-                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">Beach</span>
+                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">{{$category->name}}</span>
               </div>
             </a>
-            <a href="category.html" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
-              <div class="p-3 flex items-center gap-2 rounded-[10px] border border-[#4D73FF] group-hover:bg-[#4D73FF] transition-all duration-300">
-                <div class="w-6 h-6 flex shrink-0">
-                  <img src="assets/icons/mountain.svg" alt="icon">
-                </div>
-                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">Mountain</span>
-              </div>
-            </a>
-            <a href="category.html" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
-              <div class="p-3 flex items-center gap-2 rounded-[10px] border border-[#4D73FF] group-hover:bg-[#4D73FF] transition-all duration-300">
-                <div class="w-6 h-6 flex shrink-0">
-                  <img src="assets/icons/tent.svg" alt="icon">
-                </div>
-                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">Nature</span>
-              </div>
-            </a>
-            <a href="category.html" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
-              <div class="p-3 flex items-center gap-2 rounded-[10px] border border-[#4D73FF] group-hover:bg-[#4D73FF] transition-all duration-300">
-                <div class="w-6 h-6 flex shrink-0">
-                  <img src="assets/icons/historical.svg" alt="icon">
-                </div>
-                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">Historical</span>
-              </div>
-            </a>
+            @empty
+            <p>belum ada kategori tour</p>
+            @endforelse
           </div>
         </div>
         <div id="recommendations" class="flex flex-col gap-3">
           <h2 class="font-semibold px-4">Trip Recommendation</h2>
           <div class="main-carousel card-container">
             @forelse($package_tours as $tour)
-            <a href="{{route('front.details'['slug' => $tour->slug])}}" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
+            <a href="{{route('front.details', $tour->slug)}}" class="group px-2 first-of-type:pl-4 last-of-type:pr-4">
               <div class="w-[288px] p-4 flex flex-col gap-3 rounded-[26px] bg-white shadow-[6px_8px_20px_0_#00000008]">
                 <div class="w-full h-[330px] rounded-xl flex shrink-0 overflow-hidden">
                   <img src="{{Storage::url($tour->thumbnail)}}" class="w-full h-full object-cover" alt="thumbnails">
@@ -117,7 +86,7 @@
         </div>
         <div id="discover" class="px-4">
           <div class="w-full h-[130px] flex flex-col gap-[10px] rounded-[22px] items-center overflow-hidden relative">
-            <img src="assets/backgrounds/banney.png" class="w-full h-full object-cover object-center" alt="background">
+            <img src="assets/backgrounds/pink.png" class="w-full h-full object-cover object-center" alt="background">
             <div class="absolute z-10 flex flex-col gap-[10px] transform -translate-y-1/2 top-1/2 left-4">
               <p class="text-white font-semibold">Discover the<br>Beauty of Malang</p>
               <a href="" class="bg-[#4D73FF] p-[8px_24px] rounded-[10px] text-white font-semibold text-xs w-fit">Discover</a>
@@ -164,7 +133,7 @@
 
         </div>
         <div class="navigation-bar fixed bottom-0 z-50 max-w-[640px] w-full h-[85px] bg-white rounded-t-[25px] flex items-center justify-evenly py-[45px]">
-          <a href="" class="menu">
+          <a href="{{ route('front.index') }}" class="menu">
             <div class="flex flex-col justify-center w-fit gap-1">
               <div class="w-4 h-4 flex shrink-0 overflow-hidden mx-auto text-[#4D73FF]">
                 <img src="assets/icons/home.svg" alt="icon">             
@@ -180,7 +149,7 @@
               <p class="font-semibold text-xs leading-[20px] tracking-[0.35px]">Search</p>
             </div>
           </a>
-          <a href="schedule.html" class="menu opacity-25">
+          <a href="{{ route('dashboard.bookings') }}" class="menu opacity-25">
             <div class="flex flex-col justify-center w-fit gap-1">
               <div class="w-4 h-4 flex shrink-0 overflow-hidden mx-auto text-[#4D73FF]">
                 <img src="assets/icons/calendar-blue.svg" alt="icon">              
@@ -198,12 +167,14 @@
           </a>
         </div>
     </section>
+@endsection
+
+@push('after-scripts')
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- JavaScript -->
     <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script src={{asset('js/flickity-slider.js')}}></script>
     <script src={{asset('js/two-lines-text.js')}}></script>
-
-</body>
-</html>
+  
+@endpush

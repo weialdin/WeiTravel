@@ -31,14 +31,14 @@ class PackageBooking extends Model
     ];
 
     public function customer(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function tour(){
-        return $this->belongsTo(PackageTour::class);
+        return $this->belongsTo(PackageTour::class, 'package_tour_id');
     }
 
     public function bank(){
-        return $this->belongsTo(PackageBank::class);
+        return $this->belongsTo(PackageBank::class, 'package_bank_id');
     }
 }

@@ -23,10 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware('can:checkout package')->group(function () {
-        Route::get('/book/{packageTour:slug', [FrontController::class, 'book'])
+        Route::get('/book/{packageTour:slug}', [FrontController::class, 'book'])
             ->name('front.book');
 
-        Route::post('/book/save/(packageTour:slug}', [FrontController::class, 'book_store'])
+        Route::post('/book/save/{packageTour:slug}', [FrontController::class, 'book_store'])
             ->name('front.book.store');
 
         Route::get('/book/choose-bank/{packageBooking}/', [FrontController::class, 'choose_bank'])

@@ -1,15 +1,8 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{{asset('output.css')}}" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-</head>
-<body class="font-poppins text-black">
-    <section id="content" class="max-w-[640px] w-full mx-auto bg-[#F9F2EF] min-h-screen flex flex-col gap-8 pb-[120px]">
+@extends('front.layouts.app')
+@section('content')
+    {{-- <section id="content" class="max-w-[640px] w-full mx-auto min-h-screen flex flex-col gap-8 pb-[120px]" style="background-color: rgb(224, 251, 226);"> --}}
         <nav class="mt-8 px-4 w-full flex items-center justify-between">
-          <a href="home.html">
+          <a href="{{route('front.index', $package_tour->slug)}}">
             <img src="{{asset('assets/icons/back.png')}}" alt="back">
           </a>
           <p class="text-center m-auto font-semibold">Details</p>
@@ -19,25 +12,21 @@
         </nav>
         <div id="image-details" class="px-4 flex flex-col gap-3">
           <div class="w-full h-[345px] flex shrink-0 rounded-xl overflow-hidden">
-            <img id="image-thumbnail" src="{{asset('assets/thumbnails/nusa-penida.jpg')}}" class="w-full h-full object-cover object-center" alt="thumbnail">
+            <img id="image-thumbnail" src="{{Storage::url($package_tour->thumbnail)}}" class="w-full h-full object-cover object-center" alt="thumbnail">
           </div>
           <div class="grid grid-cols-4 gap-4 w-fit mx-auto">
-            <a href="{{asset('assets/thumbnails/nusa-penida.jpg')}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto border-blue">
-              <img src="{{asset('assets/thumbnails/nusa-penida.jpg')}}" class="w-full h-full object-cover object-center" alt="thumbnail">
+            <a href="{{Storage::url($package_tour->thumbnail)}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto border-blue">
+              <img src="{{Storage::url($package_tour->thumbnail)}}" class="w-full h-full object-cover object-center" alt="thumbnail">
             </a>
-            <a href="{{asset('assets/thumbnails/nusa-penida2.jpg')}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto opacity-50">
-              <img src="{{asset('assets/thumbnails/nusa-penida2.jpg')}}" class="w-full h-full object-cover object-center" alt="thumbnail">
+            @foreach ($latestPhotos as $photo)
+            <a href="{{Storage::url($photo->photo)}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto opacity-50">
+              <img src="{{Storage::url($photo->photo)}}" class="w-full h-full object-cover object-center" alt="thumbnail">
             </a>
-            <a href="{{asset('assets/thumbnails/nusa-penida3.jpg')}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto opacity-50">
-              <img src="{{asset('assets/thumbnails/nusa-penida3.jpg')}}" class="w-full h-full object-cover object-center" alt="thumbnail">
-            </a>
-            <a href="{{asset('assets/thumbnails/nusa-penida4.jpg')}}" class="thumbnail-option w-[74px] h-[74px] flex shrink-0 rounded-xl border-2 overflow-hidden mx-auto opacity-50">
-              <img src="{{asset('assets/thumbnails/nusa-penida4.jpg')}}" class="w-full h-full object-cover object-center" alt="thumbnail">
-            </a>
+            @endforeach
           </div>
         </div>
         <div class="mx-4 flex flex-col gap-3 bg-white p-[16px_24px] rounded-[22px]">
-          <h1 class="font-semibold">{{$package_tours->name}}</h1>
+          <h1 class="font-semibold">{{$package_tour->name}}</h1>
           <div class="flex justify-between gap-2">
             <div class="flex items-center gap-2">
               <div class="w-6 h-6 flex items-center shrink-0">
@@ -45,7 +34,7 @@
               </div>
               <div class="flex flex-col gap-1">
                 <p class="text-sm leading-[22px] tracking-[0.35px] text-darkGrey">Location</p>
-                <p class="font-semibold text-sm tracking-035">{{$package_tours->location}}</p>
+                <p class="font-semibold text-sm tracking-035">{{$package_tour->location}}</p>
               </div>
             </div>
             <div class="flex flex-col gap-1">
@@ -66,11 +55,11 @@
         <div class="mx-4 flex flex-col gap-3 bg-white p-[16px_24px] rounded-[22px]">
           <h2 class="font-semibold">About Destination</h2>
           <p id="readMore" class="text-sm leading-[22px] tracking-035 text-darkGrey">
-            Picturesque destination renowned for its stunning coastal views and pristine white sand... 
-            <button class="font-semibold text-blue" onclick="document.getElementById('readMore').classList.toggle('hidden'); document.getElementById('seeLess').classList.toggle('hidden');">Read More</button>
+            {{substr($package_tour->about, 0, 200)}}
+          <button class="font-semibold text-blue" onclick="document.getElementById('readMore').classList.toggle('hidden'); document.getElementById('seeLess').classList.toggle('hidden');">Read More</button>
           </p>
           <p id="seeLess" class="hidden text-sm leading-[22px] tracking-035 text-darkGrey">
-            Picturesque destination renowned for its stunning coastal views and pristine white sand Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt est aspernatur ex consequatur similique illo at eum repellendus ea ullam. 
+            {{$package_tour->about}}
             <button class="font-semibold text-blue" onclick="document.getElementById('readMore').classList.toggle('hidden'); document.getElementById('seeLess').classList.toggle('hidden');">See Less</button>
           </p>
         </div>
@@ -141,12 +130,13 @@
         <div class="navigation-bar fixed bottom-0 z-50 max-w-[640px] w-full h-[85px] bg-white rounded-t-[25px] flex items-center justify-between px-6">
           <div class="flex flex-col justify-center gap-1">
             <p class="text-darkGrey text-sm tracking-035 leading-[22px]">Total Price</p>
-            <p class="text-blue font-semibold text-lg leading-[26px] tracking-[0.6px]">Rp 900.000<span class="font-normal text-sx leading-[20px] tracking-035 text-darkGrey">/pack</span></p>
+            <p class="text-blue font-semibold text-lg leading-[26px] tracking-[0.6px]">Rp{{number_format($package_tour->price, 0, ',', ',')}}<span class="font-normal text-sx leading-[20px] tracking-035 text-darkGrey">/pack</span></p>
           </div>
-          <a href="booking.html" class="p-[16px_24px] rounded-xl bg-blue w-fit text-white hover:bg-[#06C755] transition-all duration-300">Book Now</a>
+          <a href="{{ route('front.book', $package_tour->slug)}}" class="p-[16px_24px] rounded-xl bg-blue w-fit text-white hover:bg-[#06C755] transition-all duration-300">Book Now</a>
         </div>
     </section>
-    <script src="{{asset('js/details.js')}}"></script>
+    @endsection
 
-</body>
-</html>
+    @push('after-scripts')
+    <script src="{{asset('js/details.js')}}"></script>
+    @endpush
