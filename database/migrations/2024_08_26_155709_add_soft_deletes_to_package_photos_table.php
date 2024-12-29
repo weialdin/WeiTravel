@@ -12,8 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('package_photos', function (Blueprint $table) {
-            //
-
             $table->softDeletes();
         });
     }

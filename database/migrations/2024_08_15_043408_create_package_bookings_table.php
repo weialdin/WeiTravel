@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('insurance');
             $table->unsignedBigInteger('tax');
             $table->unsignedBigInteger('sub_total');
-            $table->boolean('is_paid');
+            $table->boolean('is_paid')->default(false);
             $table->date('start_date');
             $table->date('end_date');
             $table->softDeletes();

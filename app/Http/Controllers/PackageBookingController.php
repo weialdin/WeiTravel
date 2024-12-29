@@ -6,6 +6,7 @@ use App\Models\PackageBooking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\MidtransService;
 
 class PackageBookingController extends Controller
 {
@@ -30,9 +31,23 @@ class PackageBookingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, MidtransService $midtransService)
     {
-        //
+    // Validasi data dan buat booking
+    $packageBooking = PackageBooking::create($request->all());
+
+    // Buat transaksi di Midtrans
+    $snapToken = $midtransService->createTransaction($packageBooking);
+
+    // Simpan snap token di booking dan redirect ke halaman pembayaran
+    return redirect()->route('admin.package_bookings.payment', $packageBooking->id)
+                     ->with('snapToken', $snapToken->token);
+    }
+
+    public function payment($id)
+    {
+        $packageBooking = PackageBooking::findOrFail($id);
+        return view('admin.package_bookings.payment', compact('packageBooking'));
     }
 
     /**
@@ -83,4 +98,22 @@ class PackageBookingController extends Controller
     {
         //
     }
+
+    public function complete($id, MidtransService $midtransService)
+    {
+    $packageBooking = PackageBooking::findOrFail($id);
+    $status = $midtransService->getTransactionStatus('booking-' . $packageBooking->id);
+
+    dd($status);  // Atau gunakan Log untuk menyimpan ke file log
+    Log::info($status);
+    
+    if ($status->transaction_status == 'settlement') {
+        $packageBooking->update(['is_paid' => true]);
+    }
+
+    return redirect()->route('admin.package_bookings.show', $packageBooking)
+                     ->with('status', 'Payment completed successfully!');
+    }
+
+
 }

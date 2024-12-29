@@ -37,7 +37,7 @@
                 <div class="w-6 h-6 flex shrink-0">
                   <img src="{{Storage::url($category->icon)}}" alt="icon">
                 </div>
-                <span class="text-sm tracking-[0.35px] text-[#4D73FF] group-hover:text-white transition-all duration-300">{{$category->name}}</span>
+                <span class="text-sm tracking-[0.35px] text-black group-hover:text-white transition-all duration-300">{{$category->name}}</span>
               </div>
             </a>
             @empty
@@ -86,9 +86,9 @@
         </div>
         <div id="discover" class="px-4">
           <div class="w-full h-[130px] flex flex-col gap-[10px] rounded-[22px] items-center overflow-hidden relative">
-            <img src="assets/backgrounds/pink.png" class="w-full h-full object-cover object-center" alt="background">
+            <img src="assets/backgrounds/newbanner.jpg" class="w-full h-full object-cover object-center" alt="background">
             <div class="absolute z-10 flex flex-col gap-[10px] transform -translate-y-1/2 top-1/2 left-4">
-              <p class="text-white font-semibold">Discover the<br>Beauty of Malang</p>
+              {{-- <p class="text-white font-semibold">Discover the<br>Beauty of Malang</p> --}}
               <a href="" class="bg-[#4D73FF] p-[8px_24px] rounded-[10px] text-white font-semibold text-xs w-fit">Discover</a>
             </div>
           </div>
@@ -157,7 +157,7 @@
               <p class="font-semibold text-xs leading-[20px] tracking-[0.35px]">Schedule</p>
             </div>
           </a>
-          <a href="" class="menu opacity-25">
+          <a href="{{ route('profile.edit') }}" class="menu opacity-25">
             <div class="flex flex-col justify-center w-fit gap-1">
               <div class="w-4 h-4 flex shrink-0 overflow-hidden mx-auto text-[#4D73FF]">
                 <img src="assets/icons/user-flat.svg" alt="icon">               

@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Midtrans;
 
 class FrontController extends Controller
 {
@@ -93,19 +94,28 @@ class FrontController extends Controller
     }
 
     public function choose_bank_store(UpdatePackageBookingRequest $request, PackageBooking $packageBooking){
-        $user = Auth::user();
-        if ($packageBooking->user_id != $user->id){
-            abort(403);
-        }
-        DB::transaction(function() use ($request, $packageBooking){
-            $validated = $request->validated();
-            $packageBooking->update([
-                'package_bank_id' => $validated['package_bank_id'],
-            ]);
-        });
-
-        return redirect()->route('front.book_payment', $packageBooking->id);
+    $user = Auth::user();
+    if ($packageBooking->user_id != $user->id){
+        abort(403);
     }
+
+    DB::transaction(function() use ($request, $packageBooking){
+        $validated = $request->validated();
+        $packageBooking->update([
+            'package_bank_id' => $validated['package_bank_id'],
+        ]);
+    });
+
+    // Cek apakah metode pembayaran adalah Midtrans (QRIS)
+    if ($request->input('package_bank_id') === 'midtrans') {
+        // Redirect ke Midtrans jika QRIS dipilih
+        return redirect()->route('front.midtrans_payment', $packageBooking->id);
+    }
+
+    // Redirect normal ke halaman payment jika bukan QRIS
+    return redirect()->route('front.book_payment', $packageBooking->id);
+    }
+
 
     public function book_payment(PackageBooking $packageBooking){
         return view('front.book_payment', compact('packageBooking'));
@@ -135,4 +145,34 @@ class FrontController extends Controller
     }
 
 
+    public function __construct()
+    {
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+    }
+
+    public function redirectMidtrans(PackageBooking $packageBooking)
+    {
+        // Buat token Snap Midtrans
+        $snapToken = \Midtrans\Snap::getSnapToken([
+            'transaction_details' => [
+                'order_id' => $packageBooking->id,
+                'gross_amount' => $packageBooking->total_amount, // Total amount dari pemesanan
+            ],
+            'customer_details' => [
+                'first_name' => $packageBooking->user->name,
+                'email' => $packageBooking->user->email,
+                'phone' => $packageBooking->user->phone_number,
+            ],
+            'enabled_payments' => ['qris'], // Memilih metode pembayaran QRIS
+        ]);
+
+        // Simpan snapToken ke session atau langsung ke view
+        session(['snapToken' => $snapToken]);
+
+        // Redirect ke halaman pembayaran Midtrans
+        return view('package_booking.payment', compact('packageBooking', 'snapToken'));
+    }
 }

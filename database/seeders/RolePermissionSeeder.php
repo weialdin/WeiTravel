@@ -50,7 +50,7 @@ class RolePermissionSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'weialdin@admin.com',
             'phone_number' => '6281334700902',
-            'avatar' => 'images/default-avatar.png',
+            'avatar' => 'assets/photos/me.jpg',
             'password' => bcrypt('777222'),
         ]);
         $user->assignRole($superAdminRole);
